@@ -7,7 +7,6 @@ class Ping:
         self.iterations = iterations
 
     def ping(self):
-
         total_duration = 0
 
         for i in range(self.iterations):
@@ -27,4 +26,8 @@ class Ping:
 
         print("Pinged deployment", self.iterations, "times.")
         print("Execution time:", total_duration, "milliseconds.")
-        print("Average response time per ping command:", average_response_time, "milliseconds")
+        print(
+            "Average response time per ping command:",
+            average_response_time,
+            "milliseconds",
+        )

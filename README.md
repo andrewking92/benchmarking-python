@@ -2,6 +2,12 @@
 
 ## Setup
 ```
+sudo pip3 install virtualenv
+
+virtualenv -p /usr/bin/python3.11 benchmarking
+
+source benchmarking/bin/activate
+
 pip install -r requirements.txt
 
 export MONGODB_URI=mongodb://localhost:27017

@@ -1,18 +1,16 @@
-import sys
 import time
 
 
 class Ping:
-    def __init__(self, database):
+    def __init__(self, database, iterations):
         self.database = database
-
+        self.iterations = iterations
 
     def ping(self):
-        TOTAL_ITER = int(sys.argv[1])
 
         total_duration = 0
 
-        for i in range(TOTAL_ITER):
+        for i in range(self.iterations):
             start_time = int(round(time.time() * 1000))
 
             # Build the ping command
@@ -25,8 +23,8 @@ class Ping:
             duration = end_time - start_time
             total_duration += duration
 
-        average_response_time = total_duration / TOTAL_ITER
+        average_response_time = total_duration / self.iterations
 
-        print("Pinged deployment", TOTAL_ITER, "times.")
+        print("Pinged deployment", self.iterations, "times.")
         print("Execution time:", total_duration, "milliseconds.")
         print("Average response time per ping command:", average_response_time, "milliseconds")

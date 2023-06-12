@@ -2,6 +2,8 @@
 
 ## Setup
 ```
+pip install -r requirements.txt
+
 export MONGODB_URI=mongodb://localhost:27017
 export DATABASE_NAME=admin
 ```

@@ -8,4 +8,6 @@ export DATABASE_NAME=admin
 
 
 ## UTIL
+```
 python main.py ping 500
+```

@@ -1,4 +1,5 @@
 import time
+from tabulate import tabulate
 
 
 class Ping:
@@ -7,10 +8,12 @@ class Ping:
         self.iterations = iterations
 
     def ping(self):
-        total_duration = 0
+        total_duration = 0.0
+        min_response_time = float('inf')
+        max_response_time = float('-inf')
 
         for i in range(self.iterations):
-            start_time = int(round(time.time() * 1000))
+            start_time = float(time.time() * 1000)
 
             # Build the ping command
             command = {"ping": 1}
@@ -18,16 +21,23 @@ class Ping:
             # Execute the ping command
             self.database.command(command)
 
-            end_time = int(round(time.time() * 1000))
+            end_time = float(time.time() * 1000)
             duration = end_time - start_time
+
+            min_response_time = min(min_response_time, duration)
+            max_response_time = max(max_response_time, duration)
+
             total_duration += duration
 
         average_response_time = total_duration / self.iterations
 
-        print("Pinged deployment", self.iterations, "times.")
-        print("Execution time:", total_duration, "milliseconds.")
-        print(
-            "Average response time per ping command:",
-            average_response_time,
-            "milliseconds",
-        )
+        # Create and print the table
+        table = [
+            ["Metric", "Time (ms)"],
+            ["Total Execution", round(total_duration, 2)],
+            ["Mean", round(average_response_time, 2)],
+            ["Min", round(min_response_time, 2)],
+            ["Max", round(max_response_time, 2)]
+        ]
+        # print(tabulate(table, headers="firstrow", tablefmt="grid"))
+        print(tabulate(table, headers="firstrow", tablefmt="grid", numalign="center"))

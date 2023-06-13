@@ -1,9 +1,9 @@
 import time
-from tabulate import tabulate
-
+import logging
 
 class Ping:
     def __init__(self, database, iterations):
+        self.logger = logging.getLogger(self.__class__.__name__)
         self.database = database
         self.iterations = iterations
 
@@ -32,12 +32,13 @@ class Ping:
         average_response_time = total_duration / self.iterations
 
         # Create and print the table
-        table = [
-            ["Metric", "Time (ms)"],
-            ["Total Execution", round(total_duration, 2)],
-            ["Mean", round(average_response_time, 2)],
-            ["Min", round(min_response_time, 2)],
-            ["Max", round(max_response_time, 2)]
-        ]
-        # print(tabulate(table, headers="firstrow", tablefmt="grid"))
-        print(tabulate(table, headers="firstrow", tablefmt="grid", numalign="center"))
+        timings = {
+            "total": round(total_duration, 2),
+            "mean": round(average_response_time, 2),
+            "min": round(min_response_time, 2),
+            "max": round(max_response_time, 2)
+        }
+
+        self.logger.info(timings)
+
+        return timings

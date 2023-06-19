@@ -47,6 +47,6 @@ class Ping(Command):
             "max": round(args[4], 2)
         }
 
-        self.logger.warning(timings)
+        self.logger.info(timings)
 
         return timings

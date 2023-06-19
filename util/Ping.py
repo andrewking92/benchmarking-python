@@ -2,6 +2,7 @@ import time
 import logging
 from util.Command import Command
 
+
 class Ping(Command):
     def __init__(self, database):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -32,19 +33,20 @@ class Ping(Command):
         
         average_response_time = total_duration / iterations
 
-        return self.output(total_duration, average_response_time, min_response_time, max_response_time)
+        return self.output(iterations, total_duration, average_response_time, min_response_time, max_response_time)
 
 
     def output(self, *args) -> dict:
 
         # Create and print the table
         timings = {
-            "total": round(args[0], 2),
-            "mean": round(args[1], 2),
-            "min": round(args[2], 2),
-            "max": round(args[3], 2)
+            "count": args[0],
+            "total": round(args[1], 2),
+            "mean": round(args[2], 2),
+            "min": round(args[3], 2),
+            "max": round(args[4], 2)
         }
 
-        self.logger.info(timings)
+        self.logger.warning(timings)
 
         return timings

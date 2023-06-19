@@ -3,10 +3,8 @@ import logging
 import sys
 import os
 
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-
 from util.Ping import Ping
+from connection.Singleton import MongoClientSingleton
 
 
 logger = logging.getLogger(__name__)
@@ -14,13 +12,12 @@ logger.setLevel(logging.INFO)
 
 
 def main(args):
-    # Create a new client and connect to the server
-    database = _get_mongo_database_client(args.mongo_uri, args.database)
-
     try:
+        client = MongoClientSingleton.get_instance(args.mongo_uri)
+
         if "ping" == args.action:
-            ping = Ping(database, args.iterations)
-            ping.ping()
+            ping = Ping(client.database)
+            ping.execute(args.iterations)
         else:
             logger.error("Invalid choice.")
             raise NotImplementedError
@@ -66,12 +63,6 @@ def _get_args(argv=None):
     )
 
     return parser.parse_args(argv)
-
-
-def _get_mongo_database_client(mongo_uri: str, database: str):
-    client = MongoClient(mongo_uri, server_api=ServerApi("1"))
-    database = client[database]
-    return database
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class Ping(Command):
             max_response_time = max(max_response_time, duration)
 
             total_duration += duration
-        
+
         average_response_time = total_duration / iterations
 
         return self.output(iterations, total_duration, average_response_time, min_response_time, max_response_time)

@@ -6,11 +6,13 @@ class MongoClientSingleton:
     _instance = None
 
     def __new__(cls, mongo_uri):
-        if cls._instance is None:
+        is_mongo_uri = (
+            hasattr(cls._instance, "mongo_uri") and cls._instance.mongo_uri != mongo_uri
+        )
+
+        if cls._instance is None or is_mongo_uri:
             cls._instance = super().__new__(cls)
-            cls._instance._client = None  # Initialize client attribute
-
-        if cls._instance._client is None:
             cls._instance._client = MongoClient(mongo_uri, server_api=ServerApi("1"))
+            cls._instance.mongo_uri = mongo_uri
 
-        return cls._instance
+        return cls._instance._client

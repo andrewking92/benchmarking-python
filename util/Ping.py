@@ -45,9 +45,10 @@ class Ping(Command):
             time.sleep(0.6)
 
         for key, value in results.items():
-            self.logger.info({key: self.output(**value)})
+            results[key] = self.output(**value)
+            self.logger.info({key: results[key]})
 
-        return
+        return results
 
 
     def output(self, *args, **kwargs) -> dict:

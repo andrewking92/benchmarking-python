@@ -15,7 +15,7 @@ def main(args):
     try:
         client = MongoClientSingleton(args.mongo_uri)
 
-        if "ping" == args.action:
+        if args.action == "ping":
             ping = Ping(client)
             ping.execute(args.iterations)
         else:

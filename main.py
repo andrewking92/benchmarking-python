@@ -53,14 +53,6 @@ def _get_args(argv=None):
         default=os.getenv("MONGODB_URI"),
         help="The MongoDB URI to test against. If not set, will use the 'MONGODB_URI' environment variable.",
     )
-    parser.add_argument(
-        "-D",
-        "--database",
-        type=str,
-        nargs="?",
-        default=os.getenv("DATABASE_NAME"),
-        help="The MongoDB Database to test against. If not set, will use the 'DATABASE_NAME' environment variable.",
-    )
 
     return parser.parse_args(argv)
 

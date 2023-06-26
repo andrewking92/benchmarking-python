@@ -41,11 +41,11 @@ class Ping(Command):
 
                 self.output(**{"address": address, "rtt": roundtrip_time})
 
-            self.logger.warning("---")
+            self.logger.info("---")
             time.sleep(0.6)
 
         for key, value in results.items():
-            self.logger.warning({key: self.output(**value)})
+            self.logger.info({key: self.output(**value)})
 
         return
 
@@ -59,7 +59,7 @@ class Ping(Command):
                 formatted[key] = round(1000 * value, 2)
 
                 if key == "rtt":
-                    self.logger.warning("{} -> rtt={} ms".format(formatted["address"], formatted[key]))
+                    self.logger.info("{} -> rtt={} ms".format(formatted["address"], formatted[key]))
             else:
                 formatted[key] = value
 

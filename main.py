@@ -16,7 +16,7 @@ def main(args):
         client = MongoClientSingleton(args.mongo_uri)
 
         if "ping" == args.action:
-            ping = Ping(client.database)
+            ping = Ping(client)
             ping.execute(args.iterations)
         else:
             logger.error("Invalid choice.")

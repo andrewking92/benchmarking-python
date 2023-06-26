@@ -4,49 +4,63 @@ from util.Command import Command
 
 
 class Ping(Command):
-    def __init__(self, database):
+    def __init__(self, client):
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.database = database
-
+        self.client = client
 
     def execute(self, iterations) -> dict:
-        total_duration = 0.0
-        min_response_time = float('inf')
-        max_response_time = float('-inf')
+        results = {}
 
-        for i in range(iterations):
-            start_time = float(time.time() * 1000)
-
+        for _i in range(iterations):
             # Build the ping command
             command = {"ping": 1}
 
             # Execute the ping command
-            self.database.command(command)
+            self.client.admin.command(command)
 
-            end_time = float(time.time() * 1000)
-            duration = end_time - start_time
+            for server_description in self.client.topology_description.server_descriptions():
+                server_data = self.client.topology_description.server_descriptions()[server_description]
 
-            min_response_time = min(min_response_time, duration)
-            max_response_time = max(max_response_time, duration)
+                address = server_data.address[0]
+                roundtrip_time = server_data.round_trip_time
 
-            total_duration += duration
+                if address not in results:
+                    results[address] = {
+                        "mean": float(0),
+                        "min": float('inf'),
+                        "max": float('-inf'),
+                        "total": float(0),
+                        "count": 0
+                    }
 
-        average_response_time = total_duration / iterations
+                results[address]["total"] += roundtrip_time
+                results[address]["count"] += 1
+                results[address]["mean"] = results[address]["total"] / results[address]["count"]
+                results[address]["min"] = min(results[address]["min"], roundtrip_time)
+                results[address]["max"] = max(results[address]["max"], roundtrip_time)
 
-        return self.output(iterations, total_duration, average_response_time, min_response_time, max_response_time)
+                self.output(**{"address": address, "rtt": roundtrip_time})
+
+            self.logger.warning("---")
+            time.sleep(0.6)
+
+        for key, value in results.items():
+            self.logger.warning({key: self.output(**value)})
+
+        return
 
 
-    def output(self, *args) -> dict:
+    def output(self, *args, **kwargs) -> dict:
+        formatted = {}
 
-        # Create and print the table
-        timings = {
-            "count": args[0],
-            "total": round(args[1], 2),
-            "mean": round(args[2], 2),
-            "min": round(args[3], 2),
-            "max": round(args[4], 2)
-        }
+        for key, value in kwargs.items():
+            if isinstance(value, float):
+                # Convert to ms
+                formatted[key] = round(1000 * value, 2)
 
-        self.logger.info(timings)
+                if key == "rtt":
+                    self.logger.warning("{} -> rtt={} ms".format(formatted["address"], formatted[key]))
+            else:
+                formatted[key] = value
 
-        return timings
+        return formatted

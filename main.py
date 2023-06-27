@@ -17,7 +17,7 @@ def main(args):
 
         if args.action == "ping":
             ping = Ping(client)
-            ping.execute(args.iterations)
+            return ping.execute(args.iterations)
         else:
             logger.error("Invalid choice.")
             raise NotImplementedError
@@ -30,7 +30,7 @@ def main(args):
 def cli(argv=None):
     args = _get_args(argv)
 
-    main(args)
+    return main(args)
 
 
 def _get_args(argv=None):
@@ -65,4 +65,4 @@ def _get_args(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(cli())
+    sys.stdout.write(str(cli()))

@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 
 def main(args):
     try:
-        client = MongoClientSingleton(args.mongo_uri)
+        client = MongoClientSingleton(args.mongo_uri, args.server_timeout)
 
         if args.action == "ping":
             ping = Ping(client)
@@ -53,7 +53,14 @@ def _get_args(argv=None):
         default=os.getenv("MONGODB_URI"),
         help="The MongoDB URI to test against. If not set, will use the 'MONGODB_URI' environment variable.",
     )
-
+    parser.add_argument(
+        "-S",
+        "--server-timeout",
+        type=int,
+        nargs="?",
+        default=30000,
+        help="The serverSelectionTimeoutMS to set when creating MongoClient.",
+    )
     return parser.parse_args(argv)
 
 

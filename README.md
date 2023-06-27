@@ -4,15 +4,13 @@ This script is designed to perform benchmarking tasks related to MongoDB. It pro
 
 ## Features
 
-- **Ping Operation**: The script supports a "ping" operation, which sends a ping command to MongoDB servers and measures the round-trip time.
-- **Multiple Iterations**: You can specify the number of iterations for the ping operation to collect statistics over multiple runs.
-- **MongoDB URI**: The script accepts a MongoDB URI as an argument or reads it from the "MONGODB_URI" environment variable.
+- **Ping Operation**: The script supports a "ping" operation, which sends a ping command to MongoDB servers and measures the round-trip time. You can specify the number of iterations for the ping operation to collect statistics over multiple runs. The script accepts a MongoDB URI as an argument or reads it from the "MONGODB_URI" environment variable.
 
 ## Requirements
 
 - Python 3.x
 - `pymongo` library
-- Other dependencies (specified in `requirements.txt`)
+
 
 ## Installation
 
@@ -62,15 +60,9 @@ python main.py ping 500
 ```
 
 
-Replace `<action>` with the desired operation, which currently supports only "ping".
-
-### Available Options
-
-- `-M, --mongo-uri <uri>`: Specify the MongoDB URI to test against. If not set, the script will use the "MONGODB_URI" environment variable.
-
 ### Examples
 
-1. Perform a single ping operation against the MongoDB server specified by the URI:
+1. Perform a single ping operation against the MongoDB server using the "MONGODB_URI" environment variable:
 ```
 python main.py ping
 ```

@@ -4,7 +4,7 @@ This script is designed to perform benchmarking tasks related to MongoDB. It pro
 
 ## Features
 
-- **Ping Operation**: The script supports a "ping" operation, which sends a ping command to MongoDB servers and measures the round-trip time. You can specify the number of iterations for the ping operation to collect statistics over multiple runs. The script accepts a MongoDB URI as an argument or reads it from the "MONGODB_URI" environment variable.
+- **Ping**: The script supports a "ping" operation, which sends a ping command to MongoDB servers and measures the round-trip time. You can specify the number of iterations for the ping operation to collect statistics over multiple runs. The script accepts a MongoDB URI as an argument or reads it from the "MONGODB_URI" environment variable.
 
 ## Requirements
 

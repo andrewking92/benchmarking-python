@@ -5,7 +5,7 @@ from util.Command import Command
 
 class Ping(Command):
     def __init__(self, client):
-        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger = logging.getLogger()
         self.client = client
 
     def execute(self, iterations) -> dict:
@@ -21,25 +21,28 @@ class Ping(Command):
             for server_description in self.client.topology_description.server_descriptions():
                 server_data = self.client.topology_description.server_descriptions()[server_description]
 
-                address = server_data.address[0]
-                roundtrip_time = server_data.round_trip_time
-
-                if address not in results:
-                    results[address] = {
+                if server_data.address not in results:
+                    results[server_data.address] = {
                         "mean": float(0),
-                        "min": float('inf'),
-                        "max": float('-inf'),
+                        "min": float("inf"),
+                        "max": float("-inf"),
                         "total": float(0),
-                        "count": 0
+                        "count": 0,
                     }
 
-                results[address]["total"] += roundtrip_time
-                results[address]["count"] += 1
-                results[address]["mean"] = results[address]["total"] / results[address]["count"]
-                results[address]["min"] = min(results[address]["min"], roundtrip_time)
-                results[address]["max"] = max(results[address]["max"], roundtrip_time)
+                results[server_data.address]["total"] += server_data.round_trip_time
+                results[server_data.address]["count"] += 1
+                results[server_data.address]["mean"] = (
+                    results[server_data.address]["total"] / results[server_data.address]["count"]
+                )
+                results[server_data.address]["min"] = min(
+                    results[server_data.address]["min"], server_data.round_trip_time
+                )
+                results[server_data.address]["max"] = max(
+                    results[server_data.address]["max"], server_data.round_trip_time
+                )
 
-                self.output(**{"address": address, "rtt": roundtrip_time})
+                self.output(**{"address": server_data.address, "rtt": server_data.round_trip_time})
 
             self.logger.info("---")
             time.sleep(0.6)
@@ -50,15 +53,12 @@ class Ping(Command):
 
         return results
 
-
     def output(self, *args, **kwargs) -> dict:
         formatted = {}
 
         for key, value in kwargs.items():
             if isinstance(value, float):
-                # Convert to ms
-                formatted[key] = round(1000 * value, 2)
-
+                formatted[key] = round(1000 * value, 2)  # Convert to ms
                 if key == "rtt":
                     self.logger.info("{} -> rtt={} ms".format(formatted["address"], formatted[key]))
             else:

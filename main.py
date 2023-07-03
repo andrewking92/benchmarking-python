@@ -7,12 +7,28 @@ from util.Ping import Ping
 from connection.Singleton import MongoClientSingleton
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+def setup_logging():
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    # Create a StreamHandler to output logs to stdout
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setLevel(logging.DEBUG)
+
+    # Define the log format
+    log_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    stream_handler.setFormatter(log_format)
+
+    # Add the StreamHandler to the logger
+    logger.addHandler(stream_handler)
+
+    return logger
 
 
 def main(args):
     try:
+        logger = setup_logging()
+
         client = MongoClientSingleton(args.mongo_uri, args.server_timeout)
 
         if args.action == "ping":
@@ -65,4 +81,4 @@ def _get_args(argv=None):
 
 
 if __name__ == "__main__":
-    sys.stdout.write(str(cli()))
+    cli()

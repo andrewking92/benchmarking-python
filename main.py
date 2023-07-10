@@ -3,12 +3,12 @@ import logging
 import sys
 import os
 
-from util.Ping import Ping
-from connection.Singleton import MongoClientSingleton
+from util.ping import Ping
+from connection.singleton import MongoClientSingleton
 
 
 def setup_logging():
-    logger = logging.getLogger()
+    logger = logging.getLogger("benchmarking")
     logger.setLevel(logging.INFO)
 
     # Create a StreamHandler to output logs to stdout
@@ -32,7 +32,7 @@ def main(args):
         client = MongoClientSingleton(args.mongo_uri, args.server_timeout)
 
         if args.action == "ping":
-            ping = Ping(client)
+            ping = Ping(client, cli_flag=True)
             return ping.execute(args.iterations)
         else:
             logger.error("Invalid choice.")

@@ -1,12 +1,14 @@
 import time
 import logging
-from util.Command import Command
+from util.command import Command
 
 
 class Ping(Command):
-    def __init__(self, client):
-        self.logger = logging.getLogger()
+    def __init__(self, client, *, cli_flag=False):
+        self.logger = logging.getLogger("benchmarking.ping")
         self.client = client
+        self.cli_flag = cli_flag
+        super().__init__()
 
     def execute(self, iterations) -> dict:
         results = {}
@@ -60,8 +62,18 @@ class Ping(Command):
             if isinstance(value, float):
                 formatted[key] = round(1000 * value, 2)  # Convert to ms
                 if key == "rtt":
-                    self.logger.info("{} -> rtt={} ms".format(formatted["address"], formatted[key]))
+                    msg = "{} -> rtt={} ms".format(formatted["address"], formatted[key])
+                    if self.cli_flag:
+                        self.logger.info(msg)
+                    else:
+                        print(msg)
             else:
                 formatted[key] = value
+        
+        if args and "---" in args:
+            if self.cli_flag:
+                self.logger.info("---")
+            else:
+                print("---")
 
         return formatted

@@ -7,7 +7,7 @@ import os
 module_dir = os.path.dirname(os.path.abspath(__file__))
 main_dir = os.path.join(module_dir, '/Users/andrew.king/local/projects/benchmarking-python')
 
-from util.Ping import Ping
+from util.ping import Ping
 
 @mongomock.patch(servers=(("localhost"),27017))
 def test_ping():

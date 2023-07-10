@@ -46,7 +46,7 @@ class Ping(Command):
 
                 self.output(**{"address": server_data.address, "rtt": server_data.round_trip_time})
 
-            self.logger.info("---")
+            self.output("---")
             time.sleep(0.6)
 
         for key, value in results.items():
@@ -69,7 +69,7 @@ class Ping(Command):
                         print(msg)
             else:
                 formatted[key] = value
-        
+
         if args and "---" in args:
             if self.cli_flag:
                 self.logger.info("---")

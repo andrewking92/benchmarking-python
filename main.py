@@ -1,45 +1,56 @@
-import argparse
-import logging
-import sys
 import os
+import gevent
+import json
 
 from util.ping import Ping
 from connection.singleton import MongoClientSingleton
+from locust import events
+from locust.env import Environment
+from locust.argument_parser import get_parser
+from users.mongo_user import MongoUser
+from setup_logging import setup_logging
 
 
-def setup_logging():
-    logger = logging.getLogger("benchmarking")
-    logger.setLevel(logging.INFO)
+LOGGER = setup_logging()
 
-    # Create a StreamHandler to output logs to stdout
-    stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setLevel(logging.DEBUG)
 
-    # Define the log format
-    log_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    stream_handler.setFormatter(log_format)
+def execute(args):
 
-    # Add the StreamHandler to the logger
-    logger.addHandler(stream_handler)
+    env = Environment(user_classes=[MongoUser], events=events)
 
-    return logger
+    env.parsed_options = args
+
+    runner = env.create_local_runner()
+
+    env.events.init.fire(environment=env, runner=runner)
+
+    runner.start(500, spawn_rate=25)
+
+    gevent.spawn_later(120, lambda: runner.quit())
+
+    runner.greenlet.join()
+
+    LOGGER.info(json.dumps(env.stats.serialize_stats(), indent=4))
+
+    return env.stats
 
 
 def main(args):
     try:
-        logger = setup_logging()
 
         client = MongoClientSingleton(args.mongo_uri, args.server_timeout)
 
         if args.action == "ping":
             ping = Ping(client, cli_flag=True)
             return ping.execute(args.iterations)
+        elif args.action == "insert":
+            return execute(args)
         else:
-            logger.error("Invalid choice.")
+            LOGGER.error("Invalid choice.")
             raise NotImplementedError
 
     except Exception as e:
-        logger.exception(e)
+        LOGGER.exception(e)
         raise e
 
 
@@ -50,10 +61,8 @@ def cli(argv=None):
 
 
 def _get_args(argv=None):
-    parser = argparse.ArgumentParser(
-        description="Script to perform benchmarking tasks."
-    )
-    parser.add_argument("action", choices=["ping"], help="The action to perform.")
+    parser = get_parser()
+    parser.add_argument("action", choices=["ping", "insert"], help="The action to perform.")
     parser.add_argument(
         "iterations",
         type=int,
